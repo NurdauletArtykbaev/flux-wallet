@@ -14,13 +14,5 @@
 php artisan vendor:publish --tag=flux-wallet-config
 ```
 
-## Использование
-
-```php
-//use Nurdaulet\FluxWallet\Facades\WalletFacade;
-//WalletFacade::to('phone')->text("message")->send();
-```
-
-[//]: # (php artisan vendor:publish --provider="Nurdaulet\FluxItems\FluxItemsServiceProvider")
 
 

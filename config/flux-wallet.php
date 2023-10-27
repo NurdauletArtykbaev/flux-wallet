@@ -41,7 +41,6 @@ return [
     ],
     'options' => [
         'payment_provider' => 'epay',// выделить на env file
-        'use_filament_admin_panel' => true,
         'cache_expiration' => 269746,
     ],
 ];
