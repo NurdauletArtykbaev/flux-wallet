@@ -1,0 +1,36 @@
+{
+    "name": "nurdaulet/flux-wallet",
+    "description": "wallet",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Nurdaulet",
+            "email": "artykbaev.nurdaulet@mail.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Nurdaulet\\FluxWallet\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "spatie/laravel-translatable": "^6.5",
+        "filament/spatie-laravel-translatable-plugin": "^2.17"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.11"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nurdaulet\\FluxWallet\\FluxWalletServiceProvider",
+                "Nurdaulet\\FluxWallet\\FluxWalletFilamentServiceProvider"
+            ],
+            "aliases": {
+                "TextConverter": "Nurdaulet\\FluxWallet\\Facades\\TextConverter",
+                "StringFormatter": "Nurdaulet\\FluxWallet\\Facades\\StringFormatter"
+            }
+        }
+    }
+}
