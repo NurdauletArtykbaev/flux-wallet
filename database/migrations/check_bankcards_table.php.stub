@@ -1,0 +1,116 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if (Schema::hasTable('bankcards')) {
+            $this->checkColumns();
+        } else {
+            Schema::create('bankcards', function (Blueprint $table) {
+                $table->id();
+                $table->string('number');
+                $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
+                $table->string('month')->nullable();
+                $table->string('year')->nullable();
+                $table->string('bank')->nullable();
+                $table->string('country')->nullable();
+                $table->string('card_id')->nullable();
+                $table->string('recurring_profile_id')->nullable();
+                $table->string('card_mask')->nullable();
+                $table->string('provider');
+                $table->string('card_owner')->nullable();
+                $table->boolean('has_3ds')->default(true);
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
+    }
+
+    private function checkColumns()
+    {
+        if (!Schema::hasColumn('bankcards', 'number')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('number');
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'user_id')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'month')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('month')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'year')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('year')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'bank')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('bank')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'country')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('country')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'card_id')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('card_id')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'recurring_profile_id')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('recurring_profile_id')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'card_mask')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('card_mask')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'provider')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('provider');
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'card_owner')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('card_owner')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'has_3ds')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->boolean('has_3ds')->default(true);
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'deleted_at')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->softDeletes();
+            });
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('bankcards');
+    }
+};

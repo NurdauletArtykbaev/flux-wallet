@@ -21,7 +21,7 @@ class FluxWalletServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishConfig();
-//            $this->publishMigrations();
+            $this->publishMigrations();
         }
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
@@ -44,7 +44,7 @@ class FluxWalletServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(
             __DIR__.'/../config/flux-wallet.php',
-            'flux-base'
+            'flux-wallet'
         );
         $this->app->bind('textConverter', TextConverterHelper::class);
         $this->app->bind('wallet', WalletFacadeService::class);
@@ -67,14 +67,16 @@ class FluxWalletServiceProvider extends ServiceProvider
     {
 
         $this->publishes([
-            __DIR__ . '/../database/migrations/create_rating_messages_table.php.stub' => $this->getMigrationFileName('create_rating_messages_table.php'),
-        ], 'flux-base-migrations');
+            __DIR__ . '/../database/migrations/check_balances_table.php.stub' => $this->getMigrationFileName(0,'check_balances_table.php'),
+            __DIR__ . '/../database/migrations/check_bankcards_table.php.stub' => $this->getMigrationFileName(1,'check_bankcards_table.php'),
+            __DIR__ . '/../database/migrations/check_transactions_table.php.stub' => $this->getMigrationFileName(2,'check_transactions_table.php'),
+        ], 'flux-wallet-migrations');
     }
 
     /**
      * Returns existing migration file if found, else uses the current timestamp.
      */
-    protected function getMigrationFileName(string $migrationFileName): string
+    protected function getMigrationFileName($index, string $migrationFileName): string
     {
         $timestamp = date('Y_m_d_His');
 
@@ -82,7 +84,7 @@ class FluxWalletServiceProvider extends ServiceProvider
 
         return Collection::make([$this->app->databasePath() . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR])
             ->flatMap(fn($path) => $filesystem->glob($path . '*_' . $migrationFileName))
-            ->push($this->app->databasePath() . "/migrations/{$timestamp}_{$migrationFileName}")
+            ->push($this->app->databasePath() . "/migrations/{$timestamp}{$index}_{$migrationFileName}")
             ->first();
     }
 }

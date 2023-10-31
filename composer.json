@@ -18,9 +18,6 @@
         "spatie/laravel-translatable": "^6.5",
         "filament/spatie-laravel-translatable-plugin": "^2.17"
     },
-    "require-dev": {
-        "orchestra/testbench": "^8.11"
-    },
     "extra": {
         "laravel": {
             "providers": [

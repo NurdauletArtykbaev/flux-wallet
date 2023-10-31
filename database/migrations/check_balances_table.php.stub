@@ -1,0 +1,63 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if (Schema::hasTable('balances')) {
+            $this->checkColumns();
+        } else {
+            Schema::create('balances', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
+                $table->bigInteger('money')->default(0);
+                $table->bigInteger('bonus')->default(0);
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
+    }
+
+    private function checkColumns()
+    {
+        if (!Schema::hasColumn('balances', 'name')) {
+            Schema::table('balances', function (Blueprint $table) {
+                $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
+            });
+        }
+        if (!Schema::hasColumn('balances', 'money')) {
+            Schema::table('balances', function (Blueprint $table) {
+                $table->bigInteger('money')->default(0);
+            });
+        }
+        if (!Schema::hasColumn('balances', 'bonus')) {
+            Schema::table('balances', function (Blueprint $table) {
+                $table->bigInteger('bonus')->default(0);
+            });
+        }
+        if (!Schema::hasColumn('balances', 'deleted_at')) {
+            Schema::table('balances', function (Blueprint $table) {
+                $table->softDeletes();
+            });
+        }
+
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('balances');
+    }
+};
