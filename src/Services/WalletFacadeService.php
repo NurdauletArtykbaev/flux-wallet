@@ -9,6 +9,6 @@ class WalletFacadeService
 {
     public function getBalanceByUserId($userId)
     {
-        return config('flux-wallet.models.balance')::where('user_id', $userId)->firstOrFail();
+        return config('flux-wallet.models.balance')::firstOrCreate(['user_id' => $userId]);
     }
 }
