@@ -67,9 +67,9 @@ class FluxWalletServiceProvider extends ServiceProvider
     {
 
         $this->publishes([
-            __DIR__ . '/../database/migrations/check_balances_table.php.stub' => $this->getMigrationFileName(0,'check_balances_table.php'),
-            __DIR__ . '/../database/migrations/check_bankcards_table.php.stub' => $this->getMigrationFileName(1,'check_bankcards_table.php'),
-            __DIR__ . '/../database/migrations/check_transactions_table.php.stub' => $this->getMigrationFileName(2,'check_transactions_table.php'),
+            __DIR__ . '/../database/migrations/check_balances_table.php.stub' => $this->getMigrationFileName(0,'check_flux_wallet_balances_table.php'),
+            __DIR__ . '/../database/migrations/check_bankcards_table.php.stub' => $this->getMigrationFileName(1,'check_flux_wallet_bankcards_table.php'),
+            __DIR__ . '/../database/migrations/check_transactions_table.php.stub' => $this->getMigrationFileName(2,'check_flux_wallet_transactions_table.php'),
         ], 'flux-wallet-migrations');
     }
 
