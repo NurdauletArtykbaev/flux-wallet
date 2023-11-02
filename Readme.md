@@ -1,5 +1,3 @@
-
-# Пакет sms-kz для Laravel
 Пакет flux-wallet - онлайн оплата .
 
 Установите пакет с помощью Composer:
