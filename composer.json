@@ -21,8 +21,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Nurdaulet\\FluxWallet\\FluxWalletServiceProvider",
-                "Nurdaulet\\FluxWallet\\FluxWalletFilamentServiceProvider"
+                "Nurdaulet\\FluxWallet\\FluxWalletServiceProvider"
             ],
             "aliases": {
                 "TextConverter": "Nurdaulet\\FluxWallet\\Facades\\TextConverter",
