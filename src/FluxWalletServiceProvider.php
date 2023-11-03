@@ -19,11 +19,6 @@ class FluxWalletServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishConfig();
-            $this->publishMigrations();
-        }
-
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
 
@@ -58,9 +53,9 @@ class FluxWalletServiceProvider extends ServiceProvider
         ], 'flux-wallet-config');
 
 
-        if (!file_exists(config_path('flux-wallet.php'))) {
-            Artisan::call('vendor:publish', ['--tag' => 'flux-wallet-config']);
-        }
+//        if (!file_exists(config_path('flux-wallet.php'))) {
+//            Artisan::call('vendor:publish', ['--tag' => 'flux-wallet-config']);
+//        }
     }
 
     protected function publishMigrations()
