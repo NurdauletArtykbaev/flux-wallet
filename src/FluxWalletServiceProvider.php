@@ -19,14 +19,13 @@ class FluxWalletServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->publishConfig();
+        }
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'payment');
 
-        $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/payment'),
-        ]);
     }
 
     public function register()
@@ -49,6 +48,7 @@ class FluxWalletServiceProvider extends ServiceProvider
     protected function publishConfig()
     {
         $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/payment'),
             __DIR__ . '/../config/flux-wallet.php' => config_path('flux-wallet.php'),
         ], 'flux-wallet-config');
 
