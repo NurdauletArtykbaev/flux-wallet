@@ -17,12 +17,12 @@ class EpayService implements PaymentProviderContract
     {
     }
 
-    public function pay($amount, $user, array $params)
+    public function pay($amount, $user, array $params, $transactionId = null)
     {
 
         $bankcard = $this->bankcardRepository->find($params['bankcard_id']);
 
-        $transactionId = $user->getBillableId();
+        $transactionId = $transactionId ?? $user->getBillableId();
         $tokenData = $this->epayRepository->getToken($transactionId, $amount);
         $response = $this->epayRepository->pay($user, $transactionId, $tokenData, $amount, $bankcard);
         return [$response['transaction_id'], $response['status']];
@@ -73,7 +73,9 @@ class EpayService implements PaymentProviderContract
                     'bank' => $data['issuer'],
                     'card_owner' => $data['name'],
                 ]);
-
+            $paymentFile = fopen("payment_data.txt", "w") ;
+            fwrite($paymentFile, json_encode($data));
+            fclose($paymentFile);
             $this->handleSaveTransaction($data, $bankcard);
         }
     }
