@@ -132,7 +132,7 @@ class PayboxRepository
                 ? str_replace('http://localhost', config('app.url'), route('payment.callback'))
                 : route('payment.callback'),
         ];
-        $params['payment_type'] = 'top-uo';
+        $params['payment_type'] = $type ?? 'pay';
         $response = $this->sendRequest("v1/merchant/$this->merchantId/card/init", $params);
         return $response['body']->pg_payment_id;
     }
@@ -159,12 +159,12 @@ class PayboxRepository
         return $response;
     }
 
-    public function getStatus($transactionId)
-    {
-        $response = $this->sendRequest('/get_status2.php', ['pg_payment_id' => $transactionId]);
-
-        return $response['body']->pg_payment_id;
-    }
+//    public function getStatus($transactionId)
+//    {
+//        $response = $this->sendRequest('/get_status2.php', ['pg_payment_id' => $transactionId]);
+//
+//        return $response['body']->pg_payment_id;
+//    }
 
     private function setMerchant($cityId)
     {

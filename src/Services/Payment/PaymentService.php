@@ -83,7 +83,7 @@ class PaymentService
         return $paymentService::callback($data);
     }
 
-    public function getUrlForCardAddition($user, $amount = 2000)
+    public function getUrlForCardAddition($user, $amount = 200)
     {
         $provider = config('flux-wallet.options.payment_provider');
         $paymentService = match ($provider) {

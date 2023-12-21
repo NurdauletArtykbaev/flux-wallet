@@ -17,11 +17,11 @@ class PaymentController
     public function payPage(EpayPayPageRequest $request)
     {
         $platform = $request->header('platform');
-        $amount = $request->input('amount', 2000);
+        $amount = $request->input('amount', 200);
 
         $data = $this->epayService->getPayPageData($amount,$request->user_id, $platform);
 
-        return view('payment.epay.pay', ['data' => $data]);
+        return view('vendor.payment.epay.pay', ['data' => $data]);
     }
 
 
@@ -44,7 +44,7 @@ class PaymentController
             'success' => true,
             'message' => $message,
         ];
-        return view('payment.success', [
+        return view('vendor.payment.success', [
             'data' => $data
         ]);
     }
@@ -58,7 +58,7 @@ class PaymentController
             'success' => false,
             'message' => $message,
         ];
-        return view('payment.error', [
+        return view('vendor.payment.error', [
             'data' => $data,
         ]);
     }

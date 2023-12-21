@@ -16,7 +16,7 @@ Route::prefix('api')->group(function () {
     Route::get('transactions', [TransactionController::class, 'index'])->middleware('auth:sanctum');
 
     Route::group(['prefix' => 'payments'], function () {
-        Route::get('success', [PaymentController::class, 'success'])->name('rsuccess');
+        Route::get('success', [PaymentController::class, 'success'])->name('success');
         Route::get('error', [PaymentController::class, 'error'])->name('error');
         Route::post('epay/callback', [PaymentController::class, 'epayCallback']);
     });
