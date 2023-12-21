@@ -98,8 +98,23 @@ class EpayRepository
         return ['transaction_id' => $transactionId, 'response' => $response, 'status' => PaymentHelper::STATUS_PAID];
     }
 
-    public function revoke($amount, $transaction)
+    public function revoke($amount, $operationId, $invoiceId)
     {
+
+        if ($amount){
+            $url = "https://epay-api.homebank.kz/operation/$operationId/refund?amount=$amount&externalID=$invoiceId";
+        }else{
+            $url = "https://epay-api.homebank.kz/operation/$operationId/refund";
+        }
+
+        $tokenData = $this->getToken($invoiceId, $amount);
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $tokenData['access_token'],
+        ])->post($url);
+        Log::channel('dev')->info(' revoke $response' .json_encode($response));
+//        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token])
+//            ->asForm()
+//            ->post($url);
 //        $transaction->load('bankcard');
 //        if ($transaction->bankcard && $transaction->bankcard->city_id) {
 //        }

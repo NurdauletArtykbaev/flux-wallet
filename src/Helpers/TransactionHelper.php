@@ -10,6 +10,7 @@ class TransactionHelper
     const TYPE_ORDER = 'order';
     const TYPE_FIRST_ORDER = 'first_order';
     const TYPE_TOP_UP = 'top_up';
+    const TYPE_ADD_CARD = 'add_card';
     const TYPE_NOT_DEFINED = 'not_defined';
 
     public static function getTransactionText($type, $fieldsJson, $amount)

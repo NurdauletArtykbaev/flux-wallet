@@ -5,6 +5,7 @@ namespace Nurdaulet\FluxWallet\Services\Payment\Providers\Epay;
 use Nurdaulet\FluxWallet\Helpers\PaymentHelper;
 use Nurdaulet\FluxWallet\Helpers\TransactionHelper;
 use Nurdaulet\FluxWallet\Models\Transaction;
+use Nurdaulet\FluxWallet\Models\User;
 use Nurdaulet\FluxWallet\Repositories\BankcardRepository;
 use Nurdaulet\FluxWallet\Services\Payment\Contracts\PaymentProviderContract;
 
@@ -28,10 +29,10 @@ class EpayService implements PaymentProviderContract
         return [$response['transaction_id'], $response['status']];
     }
 
-    public function revoke($amount, $user, $transaction)
+    public function revoke($amount, $user, $operationId = null)
     {
-        $response = $this->epayRepository->revoke($amount, $transaction);
-        $response['body']->transaction_id = $transaction->transaction_id;
+        $response = $this->epayRepository->revoke($amount, $operationId,$user);
+//        $response['body']->transaction_id = $transaction->transaction_id;
         return $response;
     }
 
@@ -73,10 +74,13 @@ class EpayService implements PaymentProviderContract
                     'bank' => $data['issuer'],
                     'card_owner' => $data['name'],
                 ]);
-            $paymentFile = fopen("payment_data.txt", "w") ;
-            fwrite($paymentFile, json_encode($data));
-            fclose($paymentFile);
+//            $paymentFile = fopen("payment_data.txt", "w") ;
+//            fwrite($paymentFile, json_encode($data));
+//            fclose($paymentFile);
             $this->handleSaveTransaction($data, $bankcard);
+            if ($data['data'] && isset($data['data']['type']) && $data['data']['type'] == TransactionHelper::TYPE_ADD_CARD) {
+                $this->epayRepository->revoke($data['amount'], $data['id'], User::findOrFail($data['accountId'])->getBillableId());
+            }
         }
     }
 
@@ -90,11 +94,11 @@ class EpayService implements PaymentProviderContract
         $isReplenish = $transaction->is_replenish;
         $status = $transaction->status;
         if (isset($data['data'])) {
-            $transaction->type = TransactionHelper::TYPE_TOP_UP;
+            $transaction->type = $data['data']['type'] ?? TransactionHelper::TYPE_TOP_UP;
             $status = PaymentHelper::STATUS_PAID;
             $isReplenish = true;
         }
-        $fieldsJson = array_merge($transaction->fields_json ?? [], ['bankcard_id' => $bankcard->id]);
+        $fieldsJson = array_merge($transaction->fields_json ?? [], ['bankcard_id' => $bankcard->id], ['operation_id' => $data['id']]);
         $transaction->amount = $transaction->amount ?? $data['amount'];
         $transaction->fields_json = $fieldsJson;
         $transaction->type = $transaction->type ?? TransactionHelper::TYPE_NOT_DEFINED;

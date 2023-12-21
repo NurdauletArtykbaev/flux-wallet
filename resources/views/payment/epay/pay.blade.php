@@ -9,7 +9,7 @@
 <body>
 
 </body>
-@if(!config('payment.epay.is_prod'))
+@if(!config('flux-wallet.payment_providers.epay.is_prod'))
     <script src="https://test-epay.homebank.kz/payform/payment-api.js"></script>
 @else
     <script src="https://epay.homebank.kz/payform/payment-api.js"></script>
@@ -40,7 +40,7 @@
         amount: "{{$data->amount}}",
         currency: "KZT",
         phone: "{{ $data->phone }}",
-        data: "{\"type\":\"add_card_top_up\"}",
+        data: {"type": {{Nurdaulet\FluxWallet\Helpers\TransactionHelper::TYPE_ADD_CARD}}},
         email: "{{ $data->email }}",
         cardSave: "true",
         auth: data
