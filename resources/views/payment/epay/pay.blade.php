@@ -40,7 +40,7 @@
         amount: "{{$data->amount}}",
         currency: "KZT",
         phone: "{{ $data->phone }}",
-        data: {"type": {{Nurdaulet\FluxWallet\Helpers\TransactionHelper::TYPE_ADD_CARD}}},
+        data: "{\"type\":"{{Nurdaulet\FluxWallet\Helpers\TransactionHelper::TYPE_ADD_CARD}}"}",
         email: "{{ $data->email }}",
         cardSave: "true",
         auth: data
