@@ -24,7 +24,7 @@
         scope: "{{ $data->token['scope'] }}",
         token_type: "{{ $data->token['token_type'] }}"
     }
-    let success_url = "{{ $data->platform == \App\Helpers\DeviceTokenHelper::PLATFORM_WEB
+    let success_url = "{{ $data->platform == Nurdaulet\FluxWallet\Helpers\DeviceTokenHelper::PLATFORM_WEB
                                 ? (env("SITE_URL") . '/payment/cards/')
                                  : (env("APP_URL") . '/api/payments/success')}}"
     let paymentObject = {
