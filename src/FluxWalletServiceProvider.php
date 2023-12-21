@@ -49,7 +49,7 @@ class FluxWalletServiceProvider extends ServiceProvider
     protected function publishConfig()
     {
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/payment'),
+            __DIR__.'/../resources/views' => resource_path('views/vendor'),
             __DIR__ . '/../config/flux-wallet.php' => config_path('flux-wallet.php'),
         ], 'flux-wallet-config');
 
