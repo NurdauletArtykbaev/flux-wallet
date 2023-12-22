@@ -32,7 +32,7 @@ class BankcardController
 
     public function getRedirectLink(Request $request)
     {
-        $url = Payment::getUrlForCardAddition($request->user(), $request->input('amount', 200));
+        $url = Payment::getUrlForCardAddition($request->user(), $request->input('amount', 20));
         return response()->json(['data' => compact('url')]);
     }
 

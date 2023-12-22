@@ -100,7 +100,6 @@ class EpayRepository
 
     public function revoke($amount, $operationId, $invoiceId)
     {
-
         if ($amount){
             $url = "https://epay-api.homebank.kz/operation/$operationId/refund?amount=$amount&externalID=$invoiceId";
         }else{
@@ -112,7 +111,7 @@ class EpayRepository
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
         ])
             ->asForm()->post($url);
-        Log::channel('dev')->info(' revoke $response' .json_encode($response));
+//        Log::channel('dev')->info(' revoke $response' .json_encode($response));
 //        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token])
 //            ->asForm()
 //            ->post($url);
