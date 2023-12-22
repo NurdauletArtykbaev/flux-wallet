@@ -110,8 +110,9 @@ class EpayRepository
         $tokenData = $this->getToken($invoiceId, $amount);
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
-        ])->post($url);
-        Log::channel('dev')->info(' revoke $response' .json_encode($response));
+        ])
+            ->asForm()->post($url);
+//        Log::channel('dev')->info(' revoke $response' .json_encode($response));
 //        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token])
 //            ->asForm()
 //            ->post($url);

@@ -8,6 +8,7 @@ use Nurdaulet\FluxWallet\Models\Transaction;
 use Nurdaulet\FluxWallet\Models\User;
 use Nurdaulet\FluxWallet\Repositories\BankcardRepository;
 use Nurdaulet\FluxWallet\Services\Payment\Contracts\PaymentProviderContract;
+use Illuminate\Support\Facades\Log;
 
 class EpayService implements PaymentProviderContract
 {
@@ -78,6 +79,8 @@ class EpayService implements PaymentProviderContract
 //            fwrite($paymentFile, json_encode($data));
 //            fclose($paymentFile);
             $this->handleSaveTransaction($data, $bankcard);
+//            Log::channel('dev')->info('jjj revoke' . json_encode($data['data'] && isset(json_decode($data['data'])->type)
+//                    && json_decode($data['data'])->type == TransactionHelper::TYPE_ADD_CARD));
             if ($data['data'] && isset(json_decode($data['data'])->type)
                 && json_decode($data['data'])->type == TransactionHelper::TYPE_ADD_CARD) {
                 $this->epayRepository->revoke($data['amount'], $data['id'], User::findOrFail($data['accountId'])->getBillableId());
