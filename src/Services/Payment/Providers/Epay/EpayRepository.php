@@ -112,17 +112,10 @@ class EpayRepository
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
         ])
             ->asForm()->post($url);
-//        Log::channel('dev')->info(' revoke $response' .json_encode($response));
+        Log::channel('dev')->info(' revoke $response' .json_encode($response));
 //        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token])
 //            ->asForm()
 //            ->post($url);
-//        $transaction->load('bankcard');
-//        if ($transaction->bankcard && $transaction->bankcard->city_id) {
-//        }
-//        $params = [
-//            'pg_payment_id' => "{$transaction->transaction_id}",
-//            'pg_refund_amount' => $amount,
-//        ];
         return [];
     }
 
