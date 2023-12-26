@@ -4,6 +4,7 @@ namespace Nurdaulet\FluxWallet\Services\Payment;
 
 use Nurdaulet\FluxWallet\Helpers\TransactionHelper;
 use Nurdaulet\FluxWallet\Interfaces\IBillable;
+use Nurdaulet\FluxWallet\Models\User;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\Epay\Facades\Epay;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\OneVision\Facades\OneVision;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\Paybox\Facades\Paybox;
@@ -18,6 +19,7 @@ class PaymentService
     public function pay($amount,  $user, array $params)
     {
         $provider = config('flux-wallet.options.payment_provider');
+        $user = User::findOrFail($user->id);
 
         $paymentService = match ($provider) {
             'paybox' => Paybox::class,
