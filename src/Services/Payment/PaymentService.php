@@ -30,7 +30,7 @@ class PaymentService
 
         $user->load('balance');
 
-        [$transactionId, $transactionStatus] = $paymentService::pay($amount,$user, $params);
+        [$transactionId, $transactionStatus] = $paymentService::pay($amount,$user, $params, $params['transaction_id'] ?? null);
         $data = [
             'amount' => $amount,
             'transaction_id' => $transactionId,
