@@ -5,14 +5,15 @@ namespace Nurdaulet\FluxWallet\Services\Payment\Providers\Epay;
 use Nurdaulet\FluxWallet\Helpers\PaymentHelper;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Nurdaulet\FluxWallet\Helpers\TransactionHelper;
 
 class EpayRepository
 {
-    private $baseUrl = 'https://epay-oauth.homebank.kz';
+    private string $baseUrl = 'https://epay-oauth.homebank.kz';
     protected $clientId;
     protected $terminal;
     protected $clientSecret;
-    protected $epayEnvIsDev;
+    protected bool $epayEnvIsDev;
 
     public function __construct()
     {
@@ -27,11 +28,11 @@ class EpayRepository
         return $this->terminal;
     }
 
-    public function getToken($invoiceID, $amount)
+    public function getToken($invoiceID, $amount, $scope = 'transfer')
     {
         $body = [
             'grant_type' => 'client_credentials',
-            'scope' => 'transfer',
+            'scope' => $scope,
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
             'invoiceID' => $invoiceID,
@@ -63,7 +64,7 @@ class EpayRepository
         return route('payments.epay.pay', $data);
     }
 
-    public function pay($user, $transactionId, $tokenData, $amount, $bankcard)
+    public function pay($user, $transactionId, $tokenData, $amount, $bankcard, $type = TransactionHelper::TYPE_ORDER)
     {
 
         $postlink = env("APP_URL") . '/api/payments/epay/callback';
@@ -74,7 +75,7 @@ class EpayRepository
             "terminalId" => $this->terminal,
             "invoiceId" => $transactionId,
             "description" => "order",
-            "accountId" => $user->id,
+            "accountId" => (string) $user->id,
             "email" => strval($user->email),
             "phone" => strval($user->phone),
             "backLink" => env("APP_URL") . '/api/payments/success',
@@ -83,12 +84,17 @@ class EpayRepository
             "failurePostLink" => $postlink,
             "language" => "rus",
             "paymentType" => "cardId",
+            "data" => [
+                'type' => $type
+            ],
             "cardId" => [
                 "id" => $bankcard->card_id,
             ],
         ];
+//        Log::channel('dev')->info('tokenInvoice'.json_encode($invoiceID));
 
         $response = Http::withHeaders([
+            'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
         ])->post("https://epay-api.homebank.kz/payments/cards/auth", $body);
 
@@ -109,12 +115,7 @@ class EpayRepository
         $tokenData = $this->getToken($invoiceId, $amount);
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
-        ])
-            ->asForm()->post($url);
-//        Log::channel('dev')->info(' revoke $response' .json_encode($response));
-//        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token])
-//            ->asForm()
-//            ->post($url);
+        ])->asForm()->post($url);
         return [];
     }
 

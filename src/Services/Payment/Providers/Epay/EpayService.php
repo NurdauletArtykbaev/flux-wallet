@@ -22,19 +22,20 @@ class EpayService implements PaymentProviderContract
     public function pay($amount, $user, array $params, $transactionId = null)
     {
 
-        $bankcard = $this->bankcardRepository->find($params['bankcard_id']);
+        $bankcard = $this->bankcardRepository->find($params['bankcard_id'], ['user_id' => $user->id]);
+        if (empty($bankcard)) {
+            throw new \Exception('Карта не найден', 400);
+        }
 
         $transactionId = $transactionId ?? $user->getBillableId();
-        $tokenData = $this->epayRepository->getToken($transactionId, $amount);
-        $response = $this->epayRepository->pay($user, $transactionId, $tokenData, $amount, $bankcard);
+        $tokenData = $this->epayRepository->getToken($transactionId, $amount,'payment');
+        $response = $this->epayRepository->pay($user, $transactionId, $tokenData, $amount, $bankcard, $params['type'] ?? null);
         return [$response['transaction_id'], $response['status']];
     }
 
     public function revoke($amount, $user, $operationId = null)
     {
-        $response = $this->epayRepository->revoke($amount, $operationId,$user);
-//        $response['body']->transaction_id = $transaction->transaction_id;
-        return $response;
+        return $this->epayRepository->revoke($amount, $operationId,$user);
     }
 
     public function getPayPageData($amount, $userId, $platform = null)

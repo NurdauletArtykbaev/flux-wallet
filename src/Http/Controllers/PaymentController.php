@@ -2,6 +2,7 @@
 
 namespace Nurdaulet\FluxWallet\Http\Controllers;
 
+use Nurdaulet\FluxWallet\Events\Payment\PaymentCallbackEvent;
 use Nurdaulet\FluxWallet\Http\Requests\Payment\EpayPayPageRequest;
 use Nurdaulet\FluxWallet\Services\Payment\Facades\Payment;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\Epay\EpayService;
@@ -28,9 +29,10 @@ class PaymentController
     public function epayCallback(Request $request)
     {
         $content = $request->all();
-        Log::channel('dev')->info('payment callback: ' . json_encode($content));
+//        Log::channel('dev')->info('payment callback: ' . json_encode($content));
 
         Payment::callback('epay', $content);
+        event(new PaymentCallbackEvent('epay', $content));
         header('HTTP/1.1 200 OK');
         $out = true;
         echo '{"accepted":' . $out . '}';

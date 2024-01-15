@@ -14,9 +14,8 @@ class BankcardService
 
     public function topUp($user, $bankcardId, $amount)
     {
-        $bankcard = $this->bankcardRepository->find($bankcardId, ['user_id' => $user->id]);
         $params = [
-            'bankcard_id' => $bankcard->id,
+            'bankcard_id' => $bankcardId,
             'type' => TransactionHelper::TYPE_TOP_UP
         ];
         Payment::pay($amount, $user, $params);
