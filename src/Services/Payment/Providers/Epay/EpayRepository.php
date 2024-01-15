@@ -64,7 +64,7 @@ class EpayRepository
         return route('payments.epay.pay', $data);
     }
 
-    public function pay($user, $transactionId, $tokenData, $amount, $bankcard, $type = TransactionHelper::TYPE_ORDER)
+    public function pay($user, $transactionId, $tokenData, $amount, $bankcard)
     {
 
         $postlink = env("APP_URL") . '/api/payments/epay/callback';
@@ -84,22 +84,17 @@ class EpayRepository
             "failurePostLink" => $postlink,
             "language" => "rus",
             "paymentType" => "cardId",
-            "data" => [
-                'type' => $type
-            ],
             "cardId" => [
                 "id" => $bankcard->card_id,
             ],
         ];
-//        Log::channel('dev')->info('tokenInvoice'.json_encode($invoiceID));
-
         $response = Http::withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
         ])->post("https://epay-api.homebank.kz/payments/cards/auth", $body);
 
         if ($response->status() != 200) {
-            return ['transaction_id' => $transactionId, 'response' => $response, 'status' => PaymentHelper::STATUS_FAILED];
+            throw new \ErrorException('Оплата не прошла',400);
         }
         return ['transaction_id' => $transactionId, 'response' => $response, 'status' => PaymentHelper::STATUS_PAID];
     }

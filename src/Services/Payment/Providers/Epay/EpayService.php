@@ -29,7 +29,7 @@ class EpayService implements PaymentProviderContract
 
         $transactionId = $transactionId ?? $user->getBillableId();
         $tokenData = $this->epayRepository->getToken($transactionId, $amount,'payment');
-        $response = $this->epayRepository->pay($user, $transactionId, $tokenData, $amount, $bankcard, $params['type'] ?? null);
+        $response = $this->epayRepository->pay($user, $transactionId, $tokenData, $amount, $bankcard);
         return [$response['transaction_id'], $response['status']];
     }
 
@@ -76,14 +76,7 @@ class EpayService implements PaymentProviderContract
                     'bank' => $data['issuer'],
                     'card_owner' => $data['name'],
                 ]);
-//            $paymentFile = fopen("payment_data.txt", "w") ;
-//            fwrite($paymentFile, json_encode($data));
-//            fclose($paymentFile);
             $this->handleSaveTransaction($data, $bankcard);
-//            Log::channel('dev')->info('jjj revoke' . json_encode($data['data'] && isset(json_decode($data['data'])->type)
-//                    && json_decode($data['data'])->type == TransactionHelper::TYPE_ADD_CARD));
-//            Log::channel('dev')->info('revoke status'. json_encode($data['data'] && isset(json_decode($data['data'])->type)
-//                    && json_decode($data['data'])->type == TransactionHelper::TYPE_ADD_CARD));
             if ($data['data'] && isset(json_decode($data['data'])->type)
                 && json_decode($data['data'])->type == TransactionHelper::TYPE_ADD_CARD) {
                 $this->epayRepository->revoke($data['amount'], $data['id'], User::findOrFail($data['accountId'])->getBillableId());
@@ -108,7 +101,7 @@ class EpayService implements PaymentProviderContract
         $fieldsJson = array_merge($transaction->fields_json ?? [], ['bankcard_id' => $bankcard->id], ['operation_id' => $data['id']]);
         $transaction->amount = $transaction->amount ?? $data['amount'];
         $transaction->fields_json = $fieldsJson;
-        $transaction->type = $transaction->type ?? TransactionHelper::TYPE_NOT_DEFINED;
+        $transaction->type = $transaction->type ?? TransactionHelper::TYPE_ORDER;
         $transaction->is_replenish = $isReplenish;
         $transaction->status = $status;
         $transaction->save();
