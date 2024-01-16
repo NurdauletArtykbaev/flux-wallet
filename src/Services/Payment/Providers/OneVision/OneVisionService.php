@@ -10,7 +10,7 @@ class OneVisionService implements PaymentProviderContract
     {
     }
 
-    public function pay($amount, $user, array $params)
+    public function pay($amount, $user, array $params, $transactionId = null)
     {
         // TODO: Implement pay() method.
     }

@@ -16,7 +16,7 @@ class PayboxService implements PaymentProviderContract
     {
     }
 
-    public function pay($amount, $user, array $params)
+    public function pay($amount, $user, array $params, $transactionId = null)
     {
         $bankcard = $this->bankcardRepository->find($params['bankcard_id']);
 
