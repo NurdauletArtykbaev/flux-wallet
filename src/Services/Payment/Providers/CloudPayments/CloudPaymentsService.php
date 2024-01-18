@@ -2,6 +2,7 @@
 
 namespace Nurdaulet\FluxWallet\Services\Payment\Providers\CloudPayments;
 
+use Nurdaulet\FluxWallet\Models\Transaction;
 use Nurdaulet\FluxWallet\Services\Payment\Contracts\PaymentProviderContract;
 
 class CloudPaymentsService implements PaymentProviderContract
@@ -10,7 +11,7 @@ class CloudPaymentsService implements PaymentProviderContract
     {
     }
 
-    public function pay($amount, $user, $params)
+    public function pay($amount, $user, $params, $transactionId = null)
     {
         $responses = collect([
             [null],
@@ -19,7 +20,7 @@ class CloudPaymentsService implements PaymentProviderContract
 
         return $responses->random();
     }
-    public function revoke($amount, $user,  $transaction)
+    public function revoke($amount,Transaction  $transaction, $revokeTransaction)
     {
     }
     public function callback($data)

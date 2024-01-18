@@ -9,6 +9,7 @@ use Nurdaulet\FluxWallet\Models\User;
 use Nurdaulet\FluxWallet\Repositories\BankcardRepository;
 use Nurdaulet\FluxWallet\Services\Payment\Contracts\PaymentProviderContract;
 use Illuminate\Support\Facades\Log;
+use Nurdaulet\FluxWallet\Services\Payment\Facades\Payment;
 
 class EpayService implements PaymentProviderContract
 {
@@ -28,14 +29,14 @@ class EpayService implements PaymentProviderContract
         }
 
         $transactionId = $transactionId ?? $user->getBillableId();
-        $tokenData = $this->epayRepository->getToken($transactionId, $amount,'payment');
+        $tokenData = $this->epayRepository->getToken($transactionId, $amount, 'payment');
         $response = $this->epayRepository->pay($user, $transactionId, $tokenData, $amount, $bankcard);
         return [$response['transaction_id'], $response['status']];
     }
 
-    public function revoke($amount, $user, $operationId = null)
+    public function revoke($amount, Transaction $transaction, $revokeTransaction)
     {
-        return $this->epayRepository->revoke($amount, $operationId,$user);
+        return $this->epayRepository->revoke($amount, $transaction->field_json->operation_id, $revokeTransaction);
     }
 
     public function getPayPageData($amount, $userId, $platform = null)
@@ -76,10 +77,10 @@ class EpayService implements PaymentProviderContract
                     'bank' => $data['issuer'],
                     'card_owner' => $data['name'],
                 ]);
-            $this->handleSaveTransaction($data, $bankcard);
+            $transaction = $this->handleSaveTransaction($data, $bankcard);
             if ($data['data'] && isset(json_decode($data['data'])->type)
                 && json_decode($data['data'])->type == TransactionHelper::TYPE_ADD_CARD) {
-                $this->epayRepository->revoke($data['amount'], $data['id'], User::findOrFail($data['accountId'])->getBillableId());
+                Payment::revoke($data['amount'], $transaction, User::findOrFail($data['accountId'])->getBillableId());
             }
         }
     }
@@ -105,5 +106,6 @@ class EpayService implements PaymentProviderContract
         $transaction->is_replenish = $isReplenish;
         $transaction->status = $status;
         $transaction->save();
+        return $transaction;
     }
 }

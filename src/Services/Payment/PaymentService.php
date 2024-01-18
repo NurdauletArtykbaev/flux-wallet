@@ -2,8 +2,10 @@
 
 namespace Nurdaulet\FluxWallet\Services\Payment;
 
+use Nurdaulet\FluxWallet\Helpers\PaymentHelper;
 use Nurdaulet\FluxWallet\Helpers\TransactionHelper;
 use Nurdaulet\FluxWallet\Interfaces\IBillable;
+use Nurdaulet\FluxWallet\Models\Transaction;
 use Nurdaulet\FluxWallet\Models\User;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\Epay\Facades\Epay;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\OneVision\Facades\OneVision;
@@ -16,21 +18,11 @@ class PaymentService
     {
     }
 
-    public function pay($amount,  $user, array $params)
+    public function pay($amount, $user, array $params)
     {
-        $provider = config('flux-wallet.options.payment_provider');
         $user = User::findOrFail($user->id);
-
-        $paymentService = match ($provider) {
-            'paybox' => Paybox::class,
-            'one_vision' => OneVision::class,
-            'epay' => Epay::class,
-            default => Epay::class
-        };
-
         $user->load('balance');
-
-        [$transactionId, $transactionStatus] = $paymentService::pay($amount,$user, $params, $params['transaction_id'] ?? null);
+        [$transactionId, $transactionStatus] = $this->getPaymentService()::pay($amount, $user, $params, $params['transaction_id'] ?? null);
         $data = [
             'amount' => $amount,
             'transaction_id' => $transactionId,
@@ -44,56 +36,42 @@ class PaymentService
         $user->transactions()->create($data);
     }
 
-    public function revoke($amount, IBillable $billable, $transaction, $orderRefund)
+    public function revoke($amount, $transaction, $revokeTransactionId)
     {
-        $provider = config('flux-wallet.options.payment_provider');
-        $paymentService = match ($provider) {
-            'paybox' => Paybox::class,
-            'one_vision' => OneVision::class,
-            'epay' => Epay::class,
-        };
-        $response = $paymentService::revoke($amount, $billable, $transaction, $orderRefund);
-
-//        $params = [
-//            'pg_revoke_payment_id' => $response['body']->pg_revoke_payment_id,
-//            'cost' => $amount,
-//            'number' => $billable->number,
-//            'return_id' => $orderRefund->return_id,
-//            'status' => $response['status']
-//        ];
-//        if (!$response['status']) {
-//            $params['message'] = $response['body']->pg_failure_description;
-//        }
-//
-//        $billable->transactions()->create([
-//            'transaction_id' => $response['body']->transaction_id,
-//            'fields_json' => $params,
-//            'status' => $params['status'] ? PaymentHelper::STATUS_REFUND : PaymentHelper::STATUS_REFUND_FAILED,
-//        ]);
-
-        return $response;
+        $fieldsJson = $transaction->fields_json?->bankcard_id ? ['bankcard_id' => $transaction->fields_json?->bankcard_id] : [];
+        $revokeTransaction = Transaction::create([
+            'user_id' => $transaction->user_id,
+            'transaction_id' => $revokeTransactionId,
+            'type' => TransactionHelper::TYPE_REFUND,
+            'status' => PaymentHelper::STATUS_PENDING,
+            'amount' => $amount,
+            'fields_json' => $fieldsJson
+        ]);
+        return $this->getPaymentService()::revoke($amount, $transaction, $revokeTransaction);
     }
 
     public function callback($provider, $data)
     {
-//        $provider = config('flux-wallet.options.payment_provider');
-        $paymentService = match ($provider) {
-            'paybox' => Paybox::class,
-            'one_vision' => OneVision::class,
-            'epay' => Epay::class,
-        };
-        return $paymentService::callback($data);
+        return $this->getPaymentService($provider)::callback($data);
     }
 
     public function getUrlForCardAddition($user, $amount = 200)
     {
-        $provider = config('flux-wallet.options.payment_provider');
-        $paymentService = match ($provider) {
+        return $this->getPaymentService()::getUrlForCardAddition($user, $amount);
+    }
+
+    private function getPaymentService($provider = null)
+    {
+        if (empty($provider)) {
+            $provider = config('flux-wallet.options.payment_provider');
+        }
+        return match ($provider) {
             'paybox' => Paybox::class,
             'one_vision' => OneVision::class,
             'epay' => Epay::class,
+            default => Epay::class
         };
-        return $paymentService::getUrlForCardAddition($user, $amount);
+
     }
 
 }

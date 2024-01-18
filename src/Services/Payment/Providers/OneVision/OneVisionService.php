@@ -2,6 +2,7 @@
 
 namespace Nurdaulet\FluxWallet\Services\Payment\Providers\OneVision;
 
+use Nurdaulet\FluxWallet\Models\Transaction;
 use Nurdaulet\FluxWallet\Services\Payment\Contracts\PaymentProviderContract;
 
 class OneVisionService implements PaymentProviderContract
@@ -16,15 +17,16 @@ class OneVisionService implements PaymentProviderContract
     }
 
 
-
-    public function getUrlForCardAddition($user, $amount = null) {
+    public function getUrlForCardAddition($user, $amount = null)
+    {
         return $this->oneVisionRepository->getUrlForCardAddition($user->id, $amount);
     }
 
 
-    public function revoke($amount, $user,  $transaction)
+    public function revoke($amount, Transaction $transaction, $revokeTransaction)
     {
     }
+
     public function callback($data)
     {
     }

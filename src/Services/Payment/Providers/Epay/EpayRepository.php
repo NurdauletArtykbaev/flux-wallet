@@ -75,7 +75,7 @@ class EpayRepository
             "terminalId" => $this->terminal,
             "invoiceId" => $transactionId,
             "description" => "order",
-            "accountId" => (string) $user->id,
+            "accountId" => (string)$user->id,
             "email" => strval($user->email),
             "phone" => strval($user->phone),
             "backLink" => env("APP_URL") . '/api/payments/success',
@@ -94,23 +94,31 @@ class EpayRepository
         ])->post("https://epay-api.homebank.kz/payments/cards/auth", $body);
 
         if ($response->status() != 200) {
-            throw new \ErrorException('Оплата не прошла',400);
+            throw new \ErrorException('Оплата не прошла', 400);
         }
         return ['transaction_id' => $transactionId, 'response' => $response, 'status' => PaymentHelper::STATUS_PAID];
     }
 
-    public function revoke($amount, $operationId, $invoiceId)
+    public function revoke($amount, $operationId, $revokeTransaction)
     {
-        if ($amount){
-            $url = "https://epay-api.homebank.kz/operation/$operationId/refund?amount=$amount&externalID=$invoiceId";
-        }else{
+        $revokeTransactionId = $revokeTransaction->transaction_id ?? '';
+        if ($amount) {
+            $url = "https://epay-api.homebank.kz/operation/$operationId/refund?amount=$amount&externalID=$revokeTransactionId";
+        } else {
             $url = "https://epay-api.homebank.kz/operation/$operationId/refund";
         }
 
-        $tokenData = $this->getToken($invoiceId, $amount);
+        $tokenData = $this->getToken($revokeTransactionId, $amount);
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $tokenData['access_token'],
         ])->asForm()->post($url);
+
+        if ($response->status() == 200) {
+            $revokeTransaction->update([
+                'status' => PaymentHelper::STATUS_REFUND
+            ]);
+        }
         return [];
     }
 

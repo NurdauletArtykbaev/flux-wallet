@@ -3,6 +3,7 @@
 namespace Nurdaulet\FluxWallet\Services\Payment\Providers\Paybox;
 
 use Nurdaulet\FluxWallet\Facades\StringFormatter;
+use Nurdaulet\FluxWallet\Models\Transaction;
 use Nurdaulet\FluxWallet\Repositories\BankcardRepository;
 use Nurdaulet\FluxWallet\Services\Payment\Contracts\PaymentProviderContract;
 use Nurdaulet\FluxWallet\Services\Payment\Providers\Paybox\Classes\CardData;
@@ -25,7 +26,7 @@ class PayboxService implements PaymentProviderContract
         return ['transaction_id' => $response['transaction_id'], 'response' => $response['response']];
     }
 
-    public function revoke($amount, $user, $transaction)
+    public function revoke($amount, Transaction  $transaction, $revokeTransaction)
     {
         $response = $this->payboxRepository->revoke($amount, $transaction);
         $response['body']->transaction_id = $transaction->transaction_id;
