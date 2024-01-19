@@ -44,6 +44,7 @@ class PaymentService
             'transaction_id' => $revokeTransactionId,
             'type' => TransactionHelper::TYPE_REFUND,
             'status' => PaymentHelper::STATUS_PENDING,
+            'provider' => $this->getProvider(),
             'amount' => $amount,
             'fields_json' => $fieldsJson
         ]);
@@ -71,7 +72,14 @@ class PaymentService
             'epay' => Epay::class,
             default => Epay::class
         };
+    }
 
+    private function getProvider($provider = null)
+    {
+        if (empty($provider)) {
+            $provider = config('flux-wallet.options.payment_provider');
+        }
+        return $provider;
     }
 
 }

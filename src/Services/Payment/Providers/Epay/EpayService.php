@@ -102,6 +102,7 @@ class EpayService implements PaymentProviderContract
         $fieldsJson = array_merge($transaction->fields_json ?? [], ['bankcard_id' => $bankcard->id], ['operation_id' => $data['id']]);
         $transaction->amount = $transaction->amount ?? $data['amount'];
         $transaction->fields_json = $fieldsJson;
+        $transaction->provider = 'epay';
         $transaction->type = $transaction->type ?? TransactionHelper::TYPE_ORDER;
         $transaction->is_replenish = $isReplenish;
         $transaction->status = $status;

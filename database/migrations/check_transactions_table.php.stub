@@ -19,6 +19,7 @@ return new class extends Migration {
                 $table->id();
                 $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
                 $table->string('type')->nullable();
+                $table->string('provider')->nullable();
                 $table->integer('amount')->default(0);
                 $table->boolean('is_money')->default(false);
                 $table->boolean('is_replenish')->default(false);
@@ -44,6 +45,11 @@ return new class extends Migration {
         if (!Schema::hasColumn('transactions', 'type')) {
             Schema::table('transactions', function (Blueprint $table) {
                 $table->string('type')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('transactions', 'provider')) {
+            Schema::table('transactions', function (Blueprint $table) {
+                $table->string('provider')->nullable();
             });
         }
         if (!Schema::hasColumn('transactions', 'amount')) {

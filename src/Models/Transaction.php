@@ -16,6 +16,7 @@ class Transaction extends Model implements IBillable
 
     protected $fillable = [
         'type',
+        'provider',
         'user_id',
         'amount',
         'is_money',
