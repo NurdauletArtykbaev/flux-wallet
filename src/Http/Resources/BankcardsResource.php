@@ -15,6 +15,7 @@ class BankcardsResource extends JsonResource
      */
     public function toArray($request)
     {
+        $cardType = $this->card_type ?? $this->getCardType();
         return [
             'id'             => $this->id,
             'number'         => $this->number,
@@ -23,8 +24,8 @@ class BankcardsResource extends JsonResource
             'bank'           => $this->bank,
             'country'        => $this->country,
             'card_id'        => $this->card_id,
-            'card_type'      => $this->getCardType(),
-            'card_type_icon' => $this->getCardTypeIcon(),
+            'card_type'      => $cardType,
+            'card_type_icon' => $this->getCardTypeIcon($cardType),
             'card_owner'     => $this->card_owner,
         ];
     }
@@ -34,32 +35,32 @@ class BankcardsResource extends JsonResource
         if ($this->card_type) {
             return $this->card_type;
         }
-        if (preg_match('/^4/', $this->card_number)) {
+        if (preg_match('/^4/', $this->number)) {
             return "Visa";
-        } elseif (preg_match('/^5[1-5]/', $this->card_number)) {
+        } elseif (preg_match('/^5[1-5]/', $this->number)) {
             return "MasterCard";
-        } elseif (preg_match('/^3[47]/', $this->card_number)) {
+        } elseif (preg_match('/^3[47]/', $this->number)) {
             return "American Express";
-        } elseif (preg_match('/^3(?:0[0-5]|[68][0-9])/', $this->card_number)) {
+        } elseif (preg_match('/^3(?:0[0-5]|[68][0-9])/', $this->number)) {
             return "Diners Club";
-        } elseif (preg_match('/^6(?:011|5[0-9]{1})/', $this->card_number)) {
+        } elseif (preg_match('/^6(?:011|5[0-9]{1})/', $this->number)) {
             return "Discover";
-        } elseif (preg_match('/^(?:2131|1800|35\d{2})/', $this->card_number)) {
+        } elseif (preg_match('/^(?:2131|1800|35\d{2})/', $this->number)) {
             return "JCB";
         }
         return null;
     }
 
-    private function getCardTypeIcon(): ?string
+    private function getCardTypeIcon($cardType): ?string
     {
-        if (empty($this->card_type)) {
+        if (empty($cardType)) {
             return null;
         }
 
-        if (Str::lower($this->card_type) == 'visa') {
+        if (Str::lower($cardType) == 'visa') {
             return env('APP_URL')   . '/vendor/flux-wallet/icons/visa.svg';
         }
-        if (Str::lower($this->card_type) == 'mastercard') {
+        if (Str::lower($cardType) == 'mastercard') {
             return env('APP_URL')   . '/vendor/flux-wallet/icons/master-card.svg';
         }
         return null;
