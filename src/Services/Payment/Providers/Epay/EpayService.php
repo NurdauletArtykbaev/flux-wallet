@@ -74,6 +74,7 @@ class EpayService implements PaymentProviderContract
                 ],
                 [
                     'number' => $data['cardMask'],
+                    'card_type' => $data['cardMask'],
                     'bank' => $data['issuer'],
                     'card_owner' => $data['name'],
                 ]);

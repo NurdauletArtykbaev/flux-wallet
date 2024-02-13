@@ -50,6 +50,7 @@ class FluxWalletServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor'),
+            __DIR__.'/../public/icons' => public_path('vendor/flux-wallet/icons'),
             __DIR__ . '/../config/flux-wallet.php' => config_path('flux-wallet.php'),
         ], 'flux-wallet-config');
 

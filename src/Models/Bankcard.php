@@ -24,6 +24,7 @@ class Bankcard extends Model
         'provider',
         'card_owner',
         'card_mask',
+        'card_type',
         'has_3ds',
     ];
 

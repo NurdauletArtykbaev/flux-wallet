@@ -26,6 +26,7 @@ return new class extends Migration {
                 $table->string('card_id')->nullable();
                 $table->string('recurring_profile_id')->nullable();
                 $table->string('card_mask')->nullable();
+                $table->string('card_type')->nullable();
                 $table->string('provider');
                 $table->string('card_owner')->nullable();
                 $table->boolean('has_3ds')->default(true);
@@ -90,6 +91,12 @@ return new class extends Migration {
         if (!Schema::hasColumn('bankcards', 'card_owner')) {
             Schema::table('bankcards', function (Blueprint $table) {
                 $table->string('card_owner')->nullable();
+            });
+        }
+        if (!Schema::hasColumn('bankcards', 'card_type')) {
+            Schema::table('bankcards', function (Blueprint $table) {
+                $table->string('card_type')->nullable();
+
             });
         }
         if (!Schema::hasColumn('bankcards', 'has_3ds')) {
