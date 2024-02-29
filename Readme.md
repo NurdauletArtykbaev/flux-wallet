@@ -17,8 +17,8 @@ php artisan vendor:publish --provider="Nurdaulet\FluxWallet\FluxWalletServicePro
 PaymentCallbackEvent
 ``` bash
 protected $listen = [
-    HandlePaymentCalbackListener::class => [
-        PaymentCallbackEvent::class,
+    PaymentCallbackEvent::class => [
+        HandlePaymentCalbackListener::class,
     ],
 ];
 ```

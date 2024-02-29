@@ -13,8 +13,8 @@ class PaymentCallbackEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $provider;
-    private $data;
+    public $provider;
+    public $data;
     /**
      * Create a new event instance.
      */
